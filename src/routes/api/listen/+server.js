@@ -14,11 +14,10 @@ export async function GET({ url, request }) {
     start(controller) {
       const connection = {
         write: (data) => {
-          if (closed) return; // don't write after closed
+          if (closed) return;
           try {
             controller.enqueue(new TextEncoder().encode(data));
           } catch (error) {
-            // stop future writes
             closed = true;
             clearInterval(keepAlive);
             console.error('Error writing to stream:', error);
@@ -36,13 +35,11 @@ export async function GET({ url, request }) {
         },
       };
 
-      // Register connection
       if (!roomConnections.has(roomId)) {
         roomConnections.set(roomId, []);
       }
       roomConnections.get(roomId).push(connection);
 
-      // Initial event
       connection.write(
         `data: ${JSON.stringify({
           type: 'connected',
@@ -51,7 +48,6 @@ export async function GET({ url, request }) {
         })}\n\n`,
       );
 
-      // Keep-alive pings
       keepAlive = setInterval(() => {
         connection.write(
           `data: ${JSON.stringify({
@@ -61,7 +57,6 @@ export async function GET({ url, request }) {
         );
       }, 30000);
 
-      // Cleanup function
       const cleanup = () => {
         if (closed) return;
         closed = true;
@@ -75,26 +70,24 @@ export async function GET({ url, request }) {
         } catch {}
       };
 
-      // Cleanup on request abort (client disconnect)
       try {
         request?.signal?.addEventListener('abort', cleanup, { once: true });
       } catch {}
 
-      // Return cancel handler for the stream
       return cleanup;
     },
     cancel() {
       closed = true;
       clearInterval(keepAlive);
-      // roomConnections cleanup happens in returned cleanup above, but guard anyway
+
       const connections = roomConnections.get(roomId) || [];
-      // remove any stale connections without write/close methods
+
       for (let i = connections.length - 1; i >= 0; i--) {
         const c = connections[i];
         if (!c || typeof c.write !== 'function') connections.splice(i, 1);
       }
       if (connections.length === 0) roomConnections.delete(roomId);
-    }
+    },
   });
 
   return new Response(stream, {
