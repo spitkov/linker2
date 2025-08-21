@@ -107,9 +107,6 @@
     text-align: center;
   }
 
-  .description {
-    color: rgb(var(--m3-scheme-on-surface-variant));
-  }
 
   .selection-section {
     display: flex;
@@ -132,19 +129,5 @@
     flex-wrap: wrap;
   }
 
-  .instructions {
-    text-align: left;
-    padding: 1.5rem;
-    border-radius: var(--m3-util-rounding-medium);
-    background: rgb(var(--m3-scheme-surface-container));
-  }
-
-  .instructions ul {
-    margin: 1rem 0;
-    padding-left: 1.5rem;
-  }
-
-  .instructions li {
-    margin: 0.5rem 0;
-  }
+  
 </style>

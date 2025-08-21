@@ -124,10 +124,4 @@
     color: rgb(var(--m3-scheme-on-surface-variant));
   }
 
-  .instructions {
-    padding: 1rem;
-    border-radius: var(--m3-util-rounding-small);
-    background: rgb(var(--m3-scheme-secondary-container));
-    color: rgb(var(--m3-scheme-on-secondary-container));
-  }
 </style>
